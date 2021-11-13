@@ -5,8 +5,8 @@ function formatMessage(username, text) {
     return {
         username,
         text,
-        time: moment().utc(+07).format('h:mm a')
+        // time: moment().utc(UTC + 7).format('h:mm a')
+        time: moment.utc(+7).local().format('h:mm a')
     };
 }
-
 module.exports = formatMessage;
