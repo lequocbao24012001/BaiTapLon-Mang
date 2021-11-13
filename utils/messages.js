@@ -6,7 +6,7 @@ function formatMessage(username, text) {
         username,
         text,
         // time: moment().utc(UTC + 7).format('h:mm a')
-        time: moment.utc(+7).format('h:mm a')
+        time: moment().format('h:mm a')
     };
 }
 module.exports = formatMessage;
