@@ -14,22 +14,22 @@ const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
 
-// Set static folder
+// Đặt thư mục tĩnh
 app.use(express.static(path.join(__dirname, 'public')));
 
 const botName = 'Chatiend Bot';
 
-// Run when client connects
+// Chạy khi user kết nối
 io.on('connection', socket => {
     socket.on('joinRoom', ({ username, room }) => {
         const user = userJoin(socket.id, username, room);
 
         socket.join(user.room);
 
-        // Welcome current user
+        // Chào mừng user hiện tại
         socket.emit('message', formatMessage(botName, `Chào mừng ${user.username} đã đến với room ${user.room}`));
 
-        // Broadcast when a user connects
+        // Thông báo khi có user kết nối
         socket.broadcast
             .to(user.room)
             .emit(
@@ -37,21 +37,21 @@ io.on('connection', socket => {
                 formatMessage(botName, `${user.username} đã tham gia phòng chat`)
             );
 
-        // Send users and room info
+        // Gửi thông tin user và phòng chat
         io.to(user.room).emit('roomUsers', {
             room: user.room,
             users: getRoomUsers(user.room)
         });
     });
 
-    // Listen for chatMessage
+    // Nhận chatMessage
     socket.on('chatMessage', msg => {
         const user = getCurrentUser(socket.id);
 
         io.to(user.room).emit('message', formatMessage(user.username, msg));
     });
 
-    // Runs when client disconnects
+    // Chạy khi user bỏ kết nối
     socket.on('disconnect', () => {
         const user = userLeave(socket.id);
 
@@ -61,7 +61,7 @@ io.on('connection', socket => {
                 formatMessage(botName, `${user.username} đã rời phòng chat`)
             );
 
-            // Send users and room info
+            // Gửi thông tin user và phòng chat
             io.to(user.room).emit('roomUsers', {
                 room: user.room,
                 users: getRoomUsers(user.room)
